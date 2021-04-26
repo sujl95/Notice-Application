@@ -1,0 +1,3 @@
+INSERT INTO NOTICE (content, file_id, mod_date, reg_date, title, user_id, username) VALUES ('내용1', null ,now(), now(), '제목1', 1, 'tester');
+INSERT INTO USER (email, password, provider, provider_id, reg_date, role, username) VALUES ('usertest@gmail.com', 'usertest', null, null, now(), 'ROLE_USER', 'usertest');
+INSERT INTO USER (email, password, provider, provider_id, reg_date, role, username) VALUES ('admintest@gmail.com', 'admintest', null, null, now(), 'ROLE_ADMIN', 'admintest');

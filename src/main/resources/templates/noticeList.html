@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>공지사항 - 목록</title>
+  <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
+</head>
+<body>
+<header th:insert="common/header.html"></header>
+<div class="row">
+  <div class="col-auto mr-auto"></div>
+  <div class="col-auto">
+    <a class="btn btn-primary" th:if="${role != null && role == 'ROLE_ADMIN'}" th:href="@{/notices/write}" role="button">공지 등록</a>
+  </div>
+</div>
+<div class="container">
+  <table class="table">
+    <thead class="thead-light">
+    <tr class="text-center">
+      <th scope="col">번호</th>
+      <th scope="col">제목</th>
+      <th scope="col">작성자</th>
+      <th scope="col">작성일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr class="text-center" th:each="notice : ${notices}">
+      <th scope="row">
+        <span th:text="${notice.id}"></span>
+      </th>
+      <td>
+        <a th:href="@{'/notices/' + ${notice.id}}">
+          <span th:text="${notice.title}"></span>
+        </a>
+      </td>
+      <td>
+        <span th:text="${notice.username}"></span>
+      </td>
+      <td>
+        <span th:text="${#temporals.format(notice.modDate, 'yyyy-MM-dd')}"></span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <nav th:if="${notices.totalPages} != 0" style="text-align: center;" aria-label="Page navigation">
+    <ul class="pagination justify-content-center"
+        th:with="start=${T(Math).floor(notices.number/10) * 10 + 1},
+                    last=(${start + 9 < notices.totalPages ? start + 9 : notices.totalPages})">
+      <li class="page-item">
+        <a class="page-link" th:href="@{/notices(page=1)}" aria-label="First">
+          <span aria-hidden="true">First</span>
+        </a>
+      </li>
+
+      <li class="page-item" th:classappend="${notices.first} ? 'disabled'">
+        <a class="page-link" th:href="${notices.first} ? '#' : @{/notices(page=${notices.number})}" aria-label="Previous">
+          <span aria-hidden="true">Previous</span>
+        </a>
+      </li>
+
+      <li class="page-item" th:each="page: ${#numbers.sequence(start, last)}" th:classappend="${page == notices.number + 1} ? 'active'">
+        <a class="page-link" th:text="${page}" th:href="@{/notices(page=${page})}"></a>
+      </li>
+
+      <li class="page-item" th:classappend="${notices.last} ? 'disabled'">
+        <a class="page-link" th:href="${notices.last} ? '#' : @{/notices(page=${notices.number + 2})}" aria-label="Next">
+          <span aria-hidden="true">Next</span>
+        </a>
+      </li>
+
+      <li class="page-item">
+        <a class="page-link" th:href="@{/notices(page=${notices.totalPages})}" aria-label="Last">
+          <span aria-hidden="true">Last</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+<script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</body>
+</html>

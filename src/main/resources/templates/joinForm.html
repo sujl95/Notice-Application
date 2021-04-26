@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Join Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#idCheck").click(function() {
+                $.ajax({
+                    type : 'POST',
+                    url : '/api/users/id-check',
+                    data : JSON.stringify({
+                        "username" : $("#username").val()
+                    }),
+                    contentType : "application/json; charset=utf-8",
+                    success : function(data) {
+                        $("#resultCheck").text(data.response);
+                    },
+                    error : function (response) {
+                        $("#resultCheck").text('소문자, 대문자, 숫자 조합(4~20자리) 를 맞춰주세요');
+                    }
+                });
+            });
+
+            $("#btnJoin").click(function () {
+                let joinForm = JSON.stringify({
+                    "username" : $("#username").val(),
+                    "password" : $("#password").val(),
+                    "email" : $("#email").val(),
+                    "role" : $("#role").val()
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/users',
+                    data : joinForm,
+                    contentType : "application/json; charset=utf-8",
+                    dataType : 'json',
+                    success : function (data) {
+                        alert("회원가입에 성공하였습니다.");
+                        $("#joinForm").attr("action", "login-form");
+                        $("#joinForm").submit();
+                    },
+                    error : function (response) {
+                        $("#resultResponse").text(response.responseJSON.message);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<header th:insert="common/header"></header>
+<h4>회원가입</h4>
+<hr/>
+<form action="#" id="joinForm" method="GET">
+    <input type="text" id="username" name="username" placeholder="Username"/>
+    <input type="button" id="idCheck" class="btn btn-primary" value="중복체크">
+    <label>소문자, 대문자, 숫자 조합(4~20자리)</label> <br/>
+    <label id="resultCheck" ></label> <br/>
+    <input type="password" id="password" name="password" placeholder="Password"/>
+    <label>(8~20자리)</label> <br/>
+    <br/>
+    <input type="email" id="email" name="email" placeholder="email"><br>
+    <label>역할 : </label>
+    <select id="role" name="role">
+        <option value="ROLE_USER" selected="selected">일반</option>
+        <option value="ROLE_ADMIN">관리자</option>
+    </select>
+    <br>
+    <input type="button" class="btn btn-primary" id="btnJoin" value="회원가입"/><label id="resultResponse"></label> <br/>
+</form>
+</body>
+</html>

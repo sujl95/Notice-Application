@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="@{'공지사항 - ' + ${notice.title}}"></title>
+  <link rel='stylesheet' href='/webjars/bootstrap/4.5.0/css/bootstrap.min.css'>
+</head>
+<body>
+<header th:insert="common/header.html"></header>
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title" th:text="@{'제목 : ' + ${notice.title}}"></h5>
+      <h6 class="card-title" th:text="@{'작성자 : '+ ${notice.username}}"></h6>
+      <p class="card-text">
+        <small class="text-muted" th:text="${'작성일 : ' + #temporals.format(notice.regDate, 'yyyy-MM-dd HH:mm')}"></small><br>
+        <small class="text-muted" th:text="${'수정일 : ' + #temporals.format(notice.modDate, 'yyyy-MM-dd HH:mm')}"></small>
+      </p>
+      <p class="card-text" th:text="${notice.content}"></p>
+      <div th:each="file : ${files}" th:if="${files != null}">
+        <strong>첨부파일 : </strong>
+        <a class="card-text" th:href="@{'/download/' + ${file.id}}" th:text="${file.origFilename}"></a><br>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3" th:if="${role == 'ROLE_ADMIN'}">
+    <div class="col-auto mr-auto"></div>
+    <div class="col-auto">
+      <a class="btn btn-info" th:href="@{'/notices/' + ${notice.id}+ '/edit'}" role="button">수정</a>
+    </div>
+    <div class="col-auto">
+      <form id="delete-form" th:action="@{'/notices/' + ${notice.id}}" method="post">
+        <input type="hidden" name="_method" value="delete"/>
+        <button id="delete-btn" type="submit" class="btn btn-danger">삭제</button>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+</body>
+</html>
