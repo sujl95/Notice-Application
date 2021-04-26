@@ -61,3 +61,15 @@ java -jar -Dfile.encoding="UTF-8" build/libs/notice-application-0.0.1-SNAPSHOT.j
 - spring boot 2.4.5
 - h2 database
 ```
+
+## 기술 스택
+
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- H2
+- Thymeleaf
+- JUnit5
+- Mockito
+- Swagger
+- OAuth2.0
