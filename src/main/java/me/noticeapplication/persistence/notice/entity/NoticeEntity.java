@@ -32,10 +32,10 @@ public class NoticeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "user_id")
+	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
-	@Column(name = "username")
+	@Column(name = "username", nullable = false)
 	private String username;
 
 	@Column(name = "title", length = 150, nullable = false)
@@ -69,5 +69,11 @@ public class NoticeEntity {
 				.title(noticeWrite.getTitle())
 				.content(noticeWrite.getContent())
 				.build();
+	}
+
+	public void changeNotice(NoticeWrite noticeWrite) {
+		this.title = noticeWrite.getTitle();
+		this.content = noticeWrite.getContent();
+		this.modDate = LocalDateTime.now();
 	}
 }

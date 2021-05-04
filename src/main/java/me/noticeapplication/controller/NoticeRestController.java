@@ -38,19 +38,12 @@ public class NoticeRestController {
 	private final NoticeService noticeService;
 	private final FileService fileService;
 
-	private void isAuthorize(PrincipalDetails principalDetails) {
-		if (ObjectUtils.isEmpty(principalDetails)) {
-			throw new UserNotAuthException();
-		}
-	}
-
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public long addNotice(@RequestParam(value = "file", required = false) MultipartFile[] file, @Valid NoticeWrite noticeWrite,
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
-		isAuthorize(principalDetails);
-		long noticeId = noticeService.addNotice(noticeWrite, principalDetails.getUsername());
+		long noticeId = noticeService.addNotice(noticeWrite, principalDetails.getId(), principalDetails.getUsername(), file);
 		if (!ObjectUtils.isEmpty(file)) {
 			fileService.addFiles(file, noticeId);
 		}
@@ -72,16 +65,14 @@ public class NoticeRestController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateNotice(@PathVariable("id") Long id, @RequestBody NoticeWrite noticeWrite,
 			@AuthenticationPrincipal PrincipalDetails principalDetails) {
-		isAuthorize(principalDetails);
 		noticeService.updateNotice(id, noticeWrite, principalDetails.getUsername());
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteNotice(@PathVariable("id") Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-		isAuthorize(principalDetails);
-		noticeService.deleteNotice(id, principalDetails.getUsername());
+	public void deleteNotice(@PathVariable("id") Long id) {
+		noticeService.deleteNotice(id);
 	}
 
 }

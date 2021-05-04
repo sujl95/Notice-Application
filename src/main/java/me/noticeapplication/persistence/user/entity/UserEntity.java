@@ -84,7 +84,7 @@ public class UserEntity {
 		return role.toString();
 	}
 
-	public boolean isGrant() {
+	public boolean isNotGrant() {
 		return role != ROLE_ADMIN;
 	}
 }

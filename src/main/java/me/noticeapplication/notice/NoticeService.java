@@ -1,17 +1,21 @@
 package me.noticeapplication.notice;
 
-import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+import me.noticeapplication.config.auth.PrincipalDetails;
 import me.noticeapplication.error.exception.common.NotGrantException;
 import me.noticeapplication.error.exception.notice.NoticeNotFoundException;
 import me.noticeapplication.error.exception.user.UserNotFoundException;
+import me.noticeapplication.file.FileService;
 import me.noticeapplication.notice.dto.NoticeDetail;
 import me.noticeapplication.notice.dto.NoticeFind;
 import me.noticeapplication.notice.dto.NoticeWrite;
@@ -28,19 +32,31 @@ public class NoticeService {
 
 	private final NoticeRepository noticeRepository;
 	private final UserRepository userRepository;
+	private final FileService fileService;
 
-	private UserEntity isAvailable(String username) {
+	private UserEntity available(String username) {
 		final UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
-		if (userEntity.isGrant()) {
+		if (userEntity.isNotGrant()) {
 			throw new NotGrantException();
 		}
 		return userEntity;
 	}
 
 	@Transactional
-	public long addNotice(NoticeWrite noticeWrite, String username) {
-		final UserEntity userEntity = isAvailable(username);
-		NoticeEntity noticeEntity = noticeRepository.save(NoticeEntity.from(noticeWrite, userEntity));
+	public long addNotice(NoticeWrite noticeWrite, Long userId, String username, MultipartFile[] files) {
+		NoticeEntity noticeEntity = noticeRepository.save(
+				NoticeEntity.builder()
+				.userId(userId)
+				.username(username)
+				.title(noticeWrite.getTitle())
+				.content(noticeWrite.getContent())
+				.build()
+		);
+
+		if (files != null) {
+			fileService.addFiles(files, noticeEntity.getId());
+		}
+
 		return noticeEntity.getId();
 	}
 
@@ -59,25 +75,21 @@ public class NoticeService {
 
 	@Transactional(readOnly = true)
 	public NoticeDetail getEditNotice(Long id, String username) {
-		isAvailable(username);
+		available(username);
 		final NoticeEntity noticeEntity = noticeRepository.findById(id).orElseThrow();
 		return NoticeDetail.from(noticeEntity);
 	}
 
 	@Transactional
 	public void updateNotice(Long id, NoticeWrite noticeWrite, String username) {
-		isAvailable(username);
-		final NoticeEntity noticeEntity = noticeRepository.findById(id).orElseThrow(NoticeNotFoundException::new);
-		noticeEntity.setTitle(noticeWrite.getTitle());
-		noticeEntity.setContent(noticeWrite.getContent());
-		noticeEntity.setModDate(LocalDateTime.now());
-		noticeRepository.save(noticeEntity);
+		NoticeEntity noticeEntity = noticeRepository.findById(id).orElseThrow(NoticeNotFoundException::new);
+		noticeEntity.changeNotice(noticeWrite);
 	}
 
 	@Transactional
-	public void deleteNotice(Long id, String username) {
-		isAvailable(username);
+	public void deleteNotice(Long id) {
 		noticeRepository.findById(id).orElseThrow(NoticeNotFoundException::new);
 		noticeRepository.deleteById(id);
+
 	}
 }

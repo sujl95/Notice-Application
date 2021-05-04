@@ -10,7 +10,7 @@
 <div class="row">
   <div class="col-auto mr-auto"></div>
   <div class="col-auto">
-    <a class="btn btn-primary" th:if="${role != null && role == 'ROLE_ADMIN'}" th:href="@{/notices/write}" role="button">공지 등록</a>
+    <a class="btn btn-primary" th:if="${role[0] != null && role[0] == 'ROLE_ADMIN'}"  th:href="@{/notices/write}" role="button">공지 등록</a>
   </div>
 </div>
 <div class="container">

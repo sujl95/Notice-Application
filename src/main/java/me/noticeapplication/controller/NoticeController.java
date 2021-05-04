@@ -5,7 +5,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -16,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,13 +51,10 @@ public class NoticeController {
 
 	private final NoticeService noticeService;
 	private final FileService fileService;
-	private final UserService userService;
 
-	private void loginStatus(Model model,
-			@AuthenticationPrincipal PrincipalDetails principalDetails) {
+	private void loginStatus(Model model, PrincipalDetails principalDetails) {
 		if (!ObjectUtils.isEmpty(principalDetails)) {
-			final UserEntity user = userService.getUser(principalDetails.getUsername());
-			model.addAttribute("role", user.getRole());
+			model.addAttribute("role", principalDetails.getAuthorities());
 		}
 	}
 
@@ -90,8 +90,7 @@ public class NoticeController {
 		if (ObjectUtils.isEmpty(principalDetails)) {
 			return "redirect:/login-from";
 		}
-		final long noticeId = noticeService.addNotice(noticeWrite, principalDetails.getUsername());
-		fileService.addFiles(file, noticeId);
+		noticeService.addNotice(noticeWrite, principalDetails.getId(), principalDetails.getUsername(), file);
 		return "redirect:/notices";
 	}
 
@@ -105,6 +104,7 @@ public class NoticeController {
 	}
 
 	@PutMapping("/notices/{id}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public String updateNotice(@PathVariable("id") Long id, NoticeWrite noticeWrite, @AuthenticationPrincipal PrincipalDetails principalDetails) {
 		noticeService.updateNotice(id, noticeWrite, principalDetails.getUsername());
 		return "redirect:/notices";
@@ -112,8 +112,8 @@ public class NoticeController {
 
 	@DeleteMapping("/notices/{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public String deleteNotice(@PathVariable("id") Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-		noticeService.deleteNotice(id, principalDetails.getUsername());
+	public String deleteNotice(@PathVariable("id") Long id) {
+		noticeService.deleteNotice(id);
 		return "redirect:/notices";
 	}
 

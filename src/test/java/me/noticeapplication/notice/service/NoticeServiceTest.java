@@ -20,10 +20,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import me.noticeapplication.error.exception.notice.NoticeNotFoundException;
+import me.noticeapplication.file.FileService;
 import me.noticeapplication.notice.NoticeService;
 import me.noticeapplication.notice.dto.NoticeDetail;
 import me.noticeapplication.notice.dto.NoticeFind;
 import me.noticeapplication.notice.dto.NoticeWrite;
+import me.noticeapplication.persistence.file.repository.FileRepository;
 import me.noticeapplication.persistence.notice.entity.NoticeEntity;
 import me.noticeapplication.persistence.notice.repository.NoticeRepository;
 import me.noticeapplication.persistence.user.entity.UserEntity;
@@ -42,6 +44,7 @@ public class NoticeServiceTest {
 	private NoticeService noticeService;
 	private UserService userService;
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	private FileService fileService;
 
 	static UserEntity userEntity;
 	static long fakeUserId = 2L;
@@ -52,6 +55,8 @@ public class NoticeServiceTest {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private FileRepository fileRepository;
 
 	@BeforeEach
 	public void setUp() {
@@ -67,7 +72,8 @@ public class NoticeServiceTest {
 
 		userEntity = UserEntity.from(userCreate);
 		ReflectionTestUtils.setField(userEntity, "id", fakeUserId);
-		noticeService = new NoticeService(noticeRepository, userRepository);
+		noticeService = new NoticeService(noticeRepository, userRepository, fileService);
+		fileService = new FileService(fileRepository);
 	}
 
 	@Test
@@ -85,7 +91,7 @@ public class NoticeServiceTest {
 		ReflectionTestUtils.setField(noticeEntity, "id", fakeUserId);
 
 		//when
-		long result = noticeService.addNotice(noticeWrite, "admintest");
+		long result = noticeService.addNotice(noticeWrite, 1L,"admintest", null);
 
 		//then
 		assertEquals(result, 2L);
@@ -101,13 +107,13 @@ public class NoticeServiceTest {
 				.title("제목 테스트")
 				.content("내용 테스트")
 				.build();
-		noticeService.addNotice(noticeWrite, "admintest");
+		noticeService.addNotice(noticeWrite, 1L,"admintest", null);
 
 		NoticeWrite noticeWrite1 = NoticeWrite.builder()
 				.title("제목 테스트1")
 				.content("내용 테스트1")
 				.build();
-		noticeService.addNotice(noticeWrite1, "admintest");
+		noticeService.addNotice(noticeWrite1, 1L,"admintest", null);
 
 		//when
 		Page<NoticeFind> notices = noticeService.getNotices(1);
@@ -154,7 +160,7 @@ public class NoticeServiceTest {
 	@DisplayName("공지 삭제 - 권한 관리자 - 성공")
 	public void deleteNoticeAuthAdminSuccess() {
 		//given
-		noticeService.deleteNotice(1L, "admintest");
+		noticeService.deleteNotice(1L);
 
 		try {
 			//when
