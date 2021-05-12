@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.noticeapplication.config.auth.PrincipalDetails;
-import me.noticeapplication.error.exception.common.UserNotAuthException;
 import me.noticeapplication.file.FileService;
 import me.noticeapplication.notice.NoticeService;
 import me.noticeapplication.notice.dto.NoticeDetail;

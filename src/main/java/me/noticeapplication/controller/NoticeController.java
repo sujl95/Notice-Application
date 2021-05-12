@@ -5,9 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -18,7 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,8 +38,6 @@ import me.noticeapplication.notice.NoticeService;
 import me.noticeapplication.notice.dto.NoticeDetail;
 import me.noticeapplication.notice.dto.NoticeFind;
 import me.noticeapplication.notice.dto.NoticeWrite;
-import me.noticeapplication.persistence.user.entity.UserEntity;
-import me.noticeapplication.user.UserService;
 
 @Slf4j
 @Controller
