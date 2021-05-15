@@ -24,7 +24,6 @@ import me.noticeapplication.persistence.user.entity.UserEntity;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@ToString
 @Table(name = "notice")
 public class NoticeEntity {
 

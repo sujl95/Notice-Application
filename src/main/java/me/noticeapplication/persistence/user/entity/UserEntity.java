@@ -25,7 +25,6 @@ import me.noticeapplication.user.model.User;
 
 @Getter
 @Entity
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user")
 public class UserEntity {
