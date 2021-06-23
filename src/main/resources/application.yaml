@@ -34,7 +34,7 @@ spring:
       enabled: true
   # DataSource Configuration
   datasource:
-    url: jdbc:h2:mem:test;MODE=MYSQL
+    url: jdbc:h2:mem:noticetest;MODE=MYSQL
     driver-class-name: org.h2.Driver
     username: ENC(9r8vL7+gfLSv0IFYLsqf/Q==)
 
