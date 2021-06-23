@@ -52,7 +52,6 @@ public class NoticeService {
 		if (files != null) {
 			fileService.addFiles(files, noticeEntity.getId());
 		}
-
 		return noticeEntity.getId();
 	}
 
