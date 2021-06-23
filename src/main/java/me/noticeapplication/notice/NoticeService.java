@@ -1,8 +1,5 @@
 package me.noticeapplication.notice;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -11,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
-import me.noticeapplication.config.auth.PrincipalDetails;
 import me.noticeapplication.error.exception.common.NotGrantException;
 import me.noticeapplication.error.exception.notice.NoticeNotFoundException;
 import me.noticeapplication.error.exception.user.UserNotFoundException;
